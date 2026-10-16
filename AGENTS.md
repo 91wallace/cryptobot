@@ -36,5 +36,5 @@ Sempre que o usuário mencionar **"na VM"**, **"no servidor"**, **"em produção
 * **Diretório do Projeto Remoto:** `/home/<SSH_USER>/cryptobot`
 * **Ambiente Virtual Remoto:** `/home/<SSH_USER>/cryptobot/.venv`
 * **Controle de Execução:** Utilizar diretamente os comandos e scripts remotos (`start`, `status`, `stop` ou `ssh oracle-vm "..."`).
-* **Sincronização de Código:** Para atualizar código na VM sem usar GitHub, enviar arquivos via `scp <arquivo> oracle-vm:/home/opc/cryptobot/<caminho>` ou pacote `.zip`.
+* **Sincronização de Código:** Para atualizar código na VM sem usar GitHub, enviar arquivos via `scp <arquivo> oracle-vm:/home/<SSH_USER>/cryptobot/<caminho>` ou pacote `.zip`.
 
