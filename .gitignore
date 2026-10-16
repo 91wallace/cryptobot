@@ -1,0 +1,47 @@
+# ========================================================
+# Segredos, Chaves e Ambientes
+# ========================================================
+.env*
+!.env.example
+*.pem
+*.key
+*.cert
+*.pfx
+id_rsa*
+
+# ========================================================
+# Dados Operacionais, Bancos de Dados e Logs Locais
+# ========================================================
+data/
+logs/
+*.db
+*.sqlite*
+*.log
+
+# ========================================================
+# Python, Ambientes Virtuais e Caches
+# ========================================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ========================================================
+# IDEs, Editores e Arquivos do SO
+# ========================================================
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ========================================================
+# Submódulos e Clones Externos Locais
+# (o nautilus_trader deve ser instalado via pip requirements.txt)
+# ========================================================
+nautilus-trade/

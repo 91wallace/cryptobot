@@ -1,0 +1,12 @@
+ccxt>=4.2.0
+pandas>=2.0
+numpy>=1.24
+python-dotenv>=1.0
+streamlit>=1.35.0
+plotly>=5.20.0
+matplotlib>=3.8.0
+rich>=13.0.0
+textual>=0.50.0
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
+nautilus_trader>=1.231.0

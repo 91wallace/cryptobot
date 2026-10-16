@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "tui-design": {
+      "source": "pageton/tui-design-skill",
+      "sourceType": "github",
+      "skillPath": "skills/tui-design/SKILL.md",
+      "computedHash": "0c8c97ee1cd49f481c6b6dc03972f3006441edbd52e75addd9fe42796896116c"
+    }
+  }
+}
