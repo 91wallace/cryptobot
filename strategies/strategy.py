@@ -15,6 +15,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any, ClassVar
 
 import pandas as pd
 
@@ -28,20 +29,7 @@ from fimathe import (
 
 MODOS_STOP = ("fora_caixinha", "linha_50", "rompimento", "auto_adaptativo")
 
-
-class Direcao(str, Enum):
-    COMPRA = "buy"
-    VENDA = "sell"
-
-
-@dataclass
-class Sinal:
-    direcao: Direcao
-    preco_entrada: float
-    stop_loss: float
-    alvos: list[float]
-    motivo: str
-    grade: dict = field(repr=False)
+from strategies.base import BaseStrategy, StrategyRegistry, Direcao, Sinal
 
 
 # ---------------------------------------------------------------------- #
@@ -88,7 +76,13 @@ def identificar_tendencia(df_pivos: pd.DataFrame) -> Direcao | None:
 # ---------------------------------------------------------------------- #
 # Estratégia
 # ---------------------------------------------------------------------- #
-class EstrategiaFimathe:
+class EstrategiaFimathe(BaseStrategy):
+    strategy_id: ClassVar[str] = "STRAT_APEX_DINAMICS_V1"
+    name: str = "apex_dinamics"
+    display_name: str = "Apex Dinamics (Lite-3.8)"
+    default_symbol: str = "SOL/USDT:USDT"
+    default_timeframe: str = "5m"
+
     def __init__(
         self,
         janela_pivo: int = 3,
@@ -265,6 +259,8 @@ class EstrategiaFimathe:
                     alvos=alvos,
                     motivo=f"{nome_romp} | stop={modo_efetivo}{motivo_extra}",
                     grade=grade,
+                    strategy_id=self.strategy_id,
+                    strategy_name=self.name,
                 )
 
         if tendencia is Direcao.VENDA:
@@ -298,6 +294,41 @@ class EstrategiaFimathe:
                     alvos=alvos,
                     motivo=f"{nome_romp} | stop={modo_efetivo}{motivo_extra}",
                     grade=grade,
+                    strategy_id=self.strategy_id,
+                    strategy_name=self.name,
                 )
 
         return None
+
+    def calcular_novo_stop(self, p: Any, preco: float, fator_degrau: float = 1.0) -> float | None:
+        """Conduz o stop por subníveis dinâmicos (Apex Dinamics / Lite-3.8):
+        a cada degrau de `fator_degrau * amplitude` a favor, o stop sobe um degrau atrás."""
+        amplitude = getattr(p, "amplitude", 0.0)
+        if amplitude <= 0:
+            return None
+        compra = p.side == "buy"
+        base = getattr(p, "extremo", None) or p.entrada
+        extremo = max(base, preco) if compra else min(base, preco)
+        p.extremo = extremo
+
+        degrau = amplitude * fator_degrau
+        avanco = (p.extremo - p.entrada) if compra else (p.entrada - p.extremo)
+        passos = int(avanco // degrau) if degrau > 0 else 0
+        if passos >= 2:
+            mult = (passos - 1) * fator_degrau
+            novo = p.entrada + mult * amplitude if compra else p.entrada - mult * amplitude
+            if (novo > p.stop) if compra else (novo < p.stop):
+                return novo
+        return None
+
+
+# Identidade Oficial: Apex Dinamics
+EstrategiaApexDinamics = EstrategiaFimathe
+ApexDinamicsStrategy = EstrategiaFimathe
+
+# Registro Oficial no StrategyRegistry
+StrategyRegistry.register("apex_dinamics")(EstrategiaFimathe)
+StrategyRegistry.register("fimathe")(EstrategiaFimathe)
+StrategyRegistry.register("lite-3.8")(EstrategiaFimathe)
+
+
